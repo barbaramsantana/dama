@@ -26,6 +26,9 @@ CORAL = (240,128,128)
 TAMANHO_QUADRADO = 80
 TAMANHO_DAMA = 34
 
+imge = pygame.image.load('coroa.png')
+imge = pygame.transform.scale(imge, (100,100))
+
 
 tela = pygame.display.set_mode((640, 640))
 pygame.display.set_caption('Jogo de Damas')
@@ -855,6 +858,7 @@ def menu_jogo():
 			    sair()
 
 		tela.fill(PRETO)
+		tela.blit(imge, (270, 40))
 		fonte = pygame.font.SysFont('CourierNew', 100)
 		surface_texto, rect_texto = text_objects("Damas", fonte, BRANCO)
 		rect_texto.center =((LARGURA/2), (ALTURA/4))
