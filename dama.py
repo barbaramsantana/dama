@@ -1,5 +1,5 @@
-
 import pygame
+from pygame.locals import *
 import time
 import random
 import sys
@@ -15,8 +15,11 @@ FOSCO = (158, 158, 158)
 BRANCO = (255, 255, 255)
 CINZA = (100, 100, 100)
 VERDE_ESCURO = (118,150,86)
+VERDE_CLARO = (0, 255, 0)
+VERDE = (50,205,50)
 YELLOW = (0, 255, 0)
 VERMELHO_CLARO = (255, 0, 0)
+VERMELHO = (128,0,0)
 YELLOW = (255,215,0)
 CINZA = (222, 235, 235)
 CORAL = (240,128,128)
@@ -25,6 +28,7 @@ TAMANHO_DAMA = 34
 
 
 tela = pygame.display.set_mode((640, 640))
+pygame.display.set_caption('Jogo de Damas')
 clock = pygame.time.Clock()
 
 # Classe principal
@@ -191,7 +195,7 @@ class Jogo:
         if self.tabuleiro[u][v].lower() not in array:
             return self.obrigs_e_pulada_aux(obrigatorios,posicao_cedula_pulada,u,i,v,j,cond)
         return obrigatorios,posicao_cedula_pulada
-    
+
     def movimento_obrigatorio(self, localizacao_cedula):
         obrigatorios = []
         posicao_cedula_pulada = []
@@ -581,8 +585,6 @@ def fim_de_jogo(winner):
 
         pygame.display.update()
         clock.tick(60)
-
-
 def coluna_clicada(pos):
     x = pos[0]
     for i in range(1, 8):
@@ -650,8 +652,8 @@ def IAsimples(jogo, vez):
             return jogo
     else:
         obrigatorios = jogo.todos_obrigatorios_IA()
-           
-    if obrigatorios != {}: 
+
+    if obrigatorios != {}:
         for i in range(len(jogo.tabuleiro)):
             for j in range(len(jogo.tabuleiro[1])):
                 if(i,j) in obrigatorios:
@@ -825,7 +827,47 @@ def loop_jogo():
         clock.tick(60)
 
 
+def sair():
+    pygame.quit()
+    quit()
+def text_objects(text, font, cor):
+	textSurface = font.render(text, True, cor)
+	return textSurface, textSurface.get_rect()
+def botao(msg, sqr, cor1, cor2, acao=None):
+	mouse = pygame.mouse.get_pos()
+	clique = pygame.mouse.get_pressed()
 
-loop_jogo()
-pygame.quit()
-quit()
+	if sqr[0] + sqr[2] > mouse[0] > sqr[0] and sqr[1] + sqr[3] > mouse[1] > sqr[1]:
+		pygame.draw.rect(tela, cor2, sqr)
+		if clique[0] == 1 and acao != None:
+			acao()
+	else:
+		pygame.draw.rect(tela, cor1, sqr)
+
+	fontePequena = pygame.font.SysFont('Arial', 30)
+	surface_texto, rect_texto = text_objects(msg, fontePequena, BRANCO)
+	rect_texto.center = ((sqr[0]+60), (sqr[1]+20))
+	tela.blit(surface_texto, rect_texto)
+def menu_jogo():
+	while True:
+		for evento in pygame.event.get():
+			if evento.type == pygame.QUIT:
+			    sair()
+
+		tela.fill(PRETO)
+		fonte = pygame.font.SysFont('CourierNew', 100)
+		surface_texto, rect_texto = text_objects("Damas", fonte, BRANCO)
+		rect_texto.center =((LARGURA/2), (ALTURA/4))
+		tela.blit(surface_texto, rect_texto)
+		j = LARGURA-560
+		s = LARGURA-200
+		q = ALTURA/2
+		botao("Sair",(s, q, 130, 40), VERMELHO_CLARO, VERMELHO, sair)
+		botao("Jogar",(j, q, 130, 40), VERDE_CLARO, VERDE, loop_jogo)
+
+		pygame.display.update()
+		clock.tick(15)
+
+
+menu_jogo()
+sair()
